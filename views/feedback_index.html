@@ -1,0 +1,24 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/feedback_index.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="index"> 
+      <div class="item" @click="goFeedbackList()"><img class="logo" src="<%= fileServer %>/images/yijianfankui_myfankui.png<%= siteVersion %>" alt=""><span>我的反馈</span><img src="<%= fileServer %>/images/yijianfankui_more.png<%= siteVersion %>" alt=""></div>
+      <div class="item" @click="goFeedback()"><img class="logo" src="<%= fileServer %>/images/yijianfankui_tijiaofankui.png<%= siteVersion %>" alt=""><span>提交反馈</span><img src="<%= fileServer %>/images/yijianfankui_more.png<%= siteVersion %>" alt=""></div>
+    </div>
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    methods: {
+      goFeedback(){
+        location.href = `/feedback.html?token=${getQueryString('token')}`
+      },
+      goFeedbackList(){
+        location.href = `/feedback_list.html?token=${getQueryString('token')}`
+      }
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

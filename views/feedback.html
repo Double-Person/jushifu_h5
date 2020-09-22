@@ -1,0 +1,94 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/feedback.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="feedback">
+      <div class="textarea">
+        <el-input type="textarea" v-model="value" placeholder="请输入您的意见与反馈" rows="2" cols="500" maxlength="500">
+        </el-input>
+        <div class="count">{{value.length}}/500</div>
+      </div>
+      <div class="upload">
+        <div class="title">上传图片</div>
+        <van-uploader v-model="fileList" :after-read="afterRead" :before-read="beforeRead" />
+      </div>
+
+      <el-button class="submit" @click="isSubmit()">提交</el-button>
+    </div>
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      value: "",
+      fileList: [],
+      imgs: [],
+      loading:false
+    },
+    mounted () {
+      setTimeout(() => {
+        this.loading=true
+      }, 500);
+    },
+    methods: {
+      isSubmit() {
+        let _this = this;
+        if (this.value == "") {
+          layer.msg("请先输入反馈信息");
+          return;
+        }
+        if (this.fileList.length == 0) {
+          layer.msg("请上传反馈图片");
+          return;
+        }
+        let imgs = [];
+        for (let i of this.fileList) {
+          imgs.push({ url: i.url })
+        }
+        ajaxJSON(`/api/feedback/add`, {
+          content: _this.value,
+          imgs: imgs
+        },
+          function (res) {
+            if (res.code == 0) {
+              layer.msg('提交成功')
+              _this.fileList=[];
+              _this.value="";
+            } else {
+              layer.msg(res.message)
+            }
+          }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.user)
+      },
+      afterRead(file) {
+        var _this = this;
+        // 将文件上传至服务器
+        let base64Img = file.content;
+        ajaxJSON(`/common/uploadbase64img`, {
+          folder: "article/",
+          base64Img: base64Img
+        },
+          function (res) {
+            if (res.code == 0) {
+              console.log(_this.fileList)
+              for (let i of _this.fileList) {
+                if (i.url == null) {
+                  i.url = res.message;
+                }
+              }
+            }
+          }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.common)
+      },
+      beforeRead(file) {
+        const isIMG = file.type === "image/jpeg" || file.type === "image/png";
+        if (!isIMG) {
+          layer.msg('请上传 jpg 或者 png 格式图片');
+          return false;
+        }
+
+        return true;
+      },
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

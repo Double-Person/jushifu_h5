@@ -1,0 +1,138 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/reviews.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="rate">
+      <div>综合评分 <el-rate class="rate-view" v-model="workerInfo.averageScore" void-icon-class="iconfont iconicon_pingjia_nor"
+          :icon-classes="iconClasses" :colors="['#FFAD16', '#FFAD16', '#FFAD16']">
+        </el-rate>
+      </div>
+      <div>服务次数 <span>{{workerInfo.serviceCount}}</span>
+      </div>
+    </div>
+
+    <div class="customer-list">
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+        <div class="customer-item" v-for="(item,index) in reviewsData" v-if="reviewsData.length>0">
+          <div class="item-top">
+            <div class="item-avatar">
+              <img :src="!item.avatar?'<%= fileServer %>/images/pic_head.png<%= siteVersion %>':item.avatar" alt="">
+              <div class="user-info">
+                <div class="user-name">{{item.nickname}}</div>
+                <div class="user-date">{{new Date(item.createTime).format('yyyy-MM-dd')}}</div>
+              </div>
+            </div>
+            <div class="customer-rate">
+              <el-rate class="rate-view" v-model="item.star" void-icon-class="iconfont iconicon_pingjia_nor"
+                :icon-classes="iconClasses" :colors="['#FFAD16', '#FFAD16', '#FFAD16']" show-text>
+              </el-rate>
+            </div>
+          </div>
+          <div class="item-content">
+            {{item.content}}
+          </div>
+          <div class="item-imgs" v-if="item.imgs.length!=0">
+            <img :src="ite.url" alt="" v-for="(ite,index) in item.imgs">
+          </div>
+          <div class="item-tag" v-if="!!item.label">
+            <div v-for="(it,index) in item.label.split('[@]jushifu[@]')">{{it}}</div>
+            <!-- <div>态度好</div> -->
+          </div>
+        </div>
+
+        <div class="null" v-if="reviewsList.total==0">
+          <img src="<%= fileServer %>/images/pic_none.png<%= siteVersion %>" alt="">
+          暂无相关信息
+        </div>
+      </van-list>
+    </div>
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      inviteTag: [{
+          name: '已获得返利',
+          selected: true
+        },
+        {
+          name: '在途返利',
+          selected: false
+        },
+      ],
+      reviewsList: {total:1},
+      reviewsData: [],
+      iconClasses: ["iconfont iconicon_pingjia_nor", "iconfont iconicon_pingjia_nor",
+        "iconfont iconicon_pingjia_nor"
+      ],
+      loading: true,
+      finished: false,
+      pageNum: 0,
+      workerInfo: {
+        averageScore: 0
+      }
+    },
+    mounted() {
+      var _this = this;
+
+      ajax(`/api/worker/detail`, {},
+        function (res) {
+          if (res.code == 0) {
+            console.log(res)
+            _this.workerInfo = res.data;
+            _this.onLoad()
+          }
+        }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.user)
+    },
+    methods: {
+      onLoad() {
+        // 异步更新数据
+        setTimeout(() => {
+          this.pageNum++;
+          this.getReviews();
+          // // 加载状态结束
+          // this.loading = false;
+        }, 1000);
+      },
+      // 获取评论列表
+      getReviews() {
+        var _this = this;
+        ajax(`/api/evaluation/list?pageNum=${this.pageNum}&pageSize=7`, {},
+          function (res) {
+            console.log(res)
+            if (res.code == 0) {
+              
+              _this.reviewsList = res.data;
+              // _this.reviewsData = res.data.rows;
+              for (let i of res.data.rows) {
+                _this.reviewsData.push(i);
+              }
+              // 加载状态结束
+              _this.loading = false;
+              console.log(_this.pageNum * 1)
+              console.log(_this.reviewsList.total)
+              console.log(_this.reviewsData.length)
+              // 数据全部加载完成
+              if (_this.pageNum * 7 >= _this.reviewsList.total && _this.reviewsData.length != 0) {
+                _this.finished = true;
+              } 
+              if(_this.reviewsList.total==0){
+                   _this.finished = true;
+                   $(document).ready(function () {
+                  $(".van-list__finished-text").hide()
+                });
+              }
+            }
+          }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.order)
+      },
+      inviteTagSwitch(item) {
+        for (let i of this.inviteTag) {
+          i.selected = false;
+        }
+        item.selected = true;
+      }
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

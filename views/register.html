@@ -1,0 +1,221 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/register.css<%= siteVersion %>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.8/lib/index.css" />
+<div id="app">
+  <span class="v-cloak">
+    <div class="register" id="register">
+      <img class="bg-img" src="<%= fileServer %>/images/pic_yaoqingzhucebg@3x.png<%= siteVersion %>" />
+      <!-- 顶部介绍信息 -->
+      <div class="introduce">
+        <div class="user-info">
+          <img class="avatars" :src="userInfo.avatar" />
+          <span class="name">{{userInfo.username}}</span>
+        </div>
+        <div class="content">
+          “聚师傅是一个值得信赖的家居平台，和我一起体验看看吧！”
+        </div>
+      </div>
+
+      <!-- 注册聚师傅 -->
+      <div class="register-content">
+        <div class="title">
+          <img src="<%= fileServer %>/images/pic_yaoqingzhuce_dianzhuiL.svg<%= siteVersion %>">
+          <span>注册聚师傅</span>
+          <img src="<%= fileServer %>/images/pic_yaoqingzhuce_dianzhuir.svg<%= siteVersion %>">
+        </div>
+        <img class="logo" src="<%= fileServer %>/images/ios3x_pic_yaoqingzhuce_logo@3x.png<%= siteVersion %>" />
+
+        <div class="register-input">
+          <div>
+            <van-field v-model="tel" type="tel" placeholder="请输入手机号" maxlength="11" @input='inputTel'></van-field>
+          </div>
+          <!-- <div> -->
+            <van-field v-model="sms" placeholder="请输入验证码" maxlength="6" @input='inputMsg'>
+              <template #button>
+                <van-button :loading="smsLoading" :color="disabled?'rgba(50, 50, 51,.7)':'#3455D3'" plain :disabled="disabled" @click="sendMsg"
+                  class="send-msg">{{btnText}}
+                </van-button>
+              </template>
+            </van-field>
+          <!-- </div> -->
+
+        </div>
+
+        <van-button :loading="loading" color="#3455D3" :disabled="disabledRegister" @click="register"
+          class="register-btn">注册</van-button>
+
+      </div>
+    </div>
+  </span>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@2.8/lib/vant.min.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script>
+  new Vue({
+    el: '#register',
+    data: {
+      btnText: '获取验证码',
+      disabled: true, //发送验证码按钮禁用状态
+      inputMsgDisabled: true, //输入验证码文本框禁用状态
+      disabledRegister: true, // 注册按钮禁用状态
+      time: 60, //验证码倒计时
+      tel: '', //手机号
+      sms: '', //验证码
+      loading: false,
+      smsLoading: false,
+      userInfo: {
+        username: "聚师傅",
+        avatar: "http://qdsytest.oss-cn-hangzhou.aliyuncs.com/20200617173814621351.png"
+      }
+    },
+    mounted() {
+      this.getUserInfo()
+      this.weiconfig()
+    },
+    methods: {
+      // 微信分享配置
+      weiconfig() {
+        var ua = navigator.userAgent.toLowerCase()
+        var isWeixin = ua.indexOf('micromessenger') != -1 //判断是否在微信环境中
+        if (isWeixin) {
+          let shareLink = escape(location.href)
+          ajax(`/api/customer/share_config?shareUrl=${shareLink}`, {},
+            function (res) {
+              if (res.code == 0) {
+                console.log(res);
+                wx.config({
+                  debug: false, // 是否开启调试模式
+                  appId: res.data.appId, // appid
+                  nonceStr: res.data.nonceStr, // 随机字符串
+                  signature: res.data.signature, // 签名
+                  timestamp: res.data.timestamp, // 时间戳
+                  jsApiList: [
+                    // 需要使用的JS接口列表
+                    'onMenuShareTimeline', // 分享到朋友圈接口
+                    'onMenuShareAppMessage', //  分享到朋友接口
+                    'onMenuShareQQ', // 分享到QQ接口
+                    'onMenuShareWeibo', // 分享到微博接口
+                    'onMenuShareQZone',
+                    'updateAppMessageShareData'
+                  ]
+                })
+                // 分享的参数:标题、图片地址、描述等
+                var shareData = {
+                  imgUrl: "https://llfileserver.oss-cn-hangzhou.aliyuncs.com/StaticFile_Test/jushifu/images/ios3x_pic_yaoqingzhuce_logo%403x.png", // 分享显示的缩略图地址
+                  link: location.href+'?userId='+getQueryString("userId"), // 分享地址
+                  desc: '聚师傅专业从事家居服务的行业O2O平台，致力于提供家居配送、安装、维修、保养等一站式服务', // 分享描述
+                  title: '好友邀请你注册聚师傅', // 分享标题
+                  success: function () { }, // 用户确认分享后执行的回调函数
+                  cancel: function () { } // 用户取消分享后执行的回调函数
+                }
+                //正式使用
+                wx.ready(res => {
+                  wx.updateAppMessageShareData(shareData) // 分享给好友
+                  wx.onMenuShareTimeline(shareData) // 分享到朋友圈
+                  wx.onMenuShareAppMessage(shareData) // 分享给好友
+                  wx.onMenuShareQQ({})
+                  wx.onMenuShareWeibo({})
+                  wx.onMenuShareQZone({})
+                })
+              }
+            }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.user)
+
+
+        }
+        // else {
+        //   layer.msg('请在微信中打开该网站，否则无法正常使用')
+        // }
+      },
+      // 获取用户信息
+      getUserInfo() {
+        let _this = this
+        ajax(`/api/user_info`, {
+          userId: getQueryString("userId")
+        },
+          function (res) {
+            if (res.code == 0) {
+              _this.userInfo = res.data
+              console.log(res)
+            } else {
+              layer.msg(res.message)
+            }
+          }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.user)
+      },
+      // 输入手机号码
+      inputTel() {
+        myreg = /^1[123456789]\d{9}$/;
+        if (this.tel.length == 11 && myreg.test(this.tel)) { //  自定义正则
+          this.disabled = false;
+          this.inputMsgDisabled = false
+        } else {
+          this.disabled = true;
+          this.inputMsgDisabled = true
+        }
+      },
+      // 发送验证码
+      sendMsg() {
+        let _this = this
+        _this.disabled = true;
+        ajax(`/platform/val_code`, {
+          telephone: _this.tel
+        },
+          function (res) {
+            if (res.code == 0) {
+              layer.msg('验证码已发送');
+              _this.btnText = `60秒后重新发送`;
+              _this.disabled = true;
+              let timer = setInterval(() => {
+                _this.time--;
+                _this.btnText = `${_this.time}秒后重新发送`;
+                if (_this.time <= 0) {
+                  clearInterval(timer);
+                  _this.btnText = '重发验证码';
+                  _this.disabled = false;
+                  _this.time = 60;
+                }
+              }, 1000);
+            } else {
+              layer.msg(res.message)
+            }
+          }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.common)
+
+      },
+
+      // 改变注册按钮禁用状态
+      inputMsg() {
+        // 判断验证码长度
+        if (this.sms.length == 6)
+          this.disabledRegister = false;
+        else
+          this.disabledRegister = true
+      },
+      // 注册按钮
+      register() {
+        let _this = this
+        // 发送登陆注册请求
+        _this.loading = true
+        ajax(`/api/customer/register`, {
+          username: _this.tel,
+          code: _this.sms,
+          referralCode: _this.userInfo.referralCode
+        },
+          function (res) {
+            if (res.code == 0) {
+              layer.msg('注册成功')
+              _this.fileList = [];
+              _this.value = "";
+              _this.loading = false
+              location.href = `/register_success.html`
+            } else {
+              layer.msg(res.message)
+              _this.loading = false
+            }
+
+          }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.user)
+      }
+
+    },
+  });
+</script>
+<% include ./_share/_footer.html %>

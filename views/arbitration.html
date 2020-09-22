@@ -1,0 +1,47 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/arbitration.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+   <div class="arbitration-list">
+     <div class="arbitration-item" v-for="(item,index) in arbitrationList.rows" v-if="arbitrationList.total>0" @click="openRefund(item)">
+       <div class="item-top">退款单号：{{item.refundNo}} <span>{{item.status=='WAIT'?'待处理':item.status=='PROCESSED'?'已处理':''}}</span></div>
+       <div class="item-bottom"><span>申请时间:</span>{{new Date(item.createTime).format("yyyy-MM-dd")}}</div>
+       <div class="item-bottom"><span>订单号:</span>{{item.orderNo}}</div>
+       <div class="item-bottom"><span>订单总金额:</span>¥{{item.orderAmount}} （含加价 ¥{{item.markupAmount}}）</div>
+       <div class="item-bottom"><span>仲裁退款金额:</span>¥{{item.applyArbitrationAmount}}</div>
+     </div>
+
+     <div class="null" v-if="arbitrationList.total==0">
+        <img src="<%= fileServer %>/images/pic_none.png<%= siteVersion %>" alt="">
+        暂无相关信息
+      </div>
+   </div>
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      arbitrationList:{
+        rows:[],
+        total:0
+      }
+    },
+    mounted () {
+      var _this=this;
+      ajax(`/api/refund?pageNum=1&pageSize=50&refundStatusEnum=ARBITRATION_ALL`,{},
+        function (res) {
+          if (res.code == 0) {
+            _this.arbitrationList=res.data;
+          }
+
+        }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.order)
+    },
+    methods: {
+      openRefund(item){
+        location.href=`/arbitration_detail.html?token=${getQueryString('token')}&id=${item.id}`
+      }
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

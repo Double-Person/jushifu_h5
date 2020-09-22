@@ -1,0 +1,75 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/goods_detail.css<%= siteVersion %>">
+<div id="app">
+    <span class="v-cloak">
+        <div class="goods-detail">
+            <div class="title">商品名称 <span>{{goods.name}}</span></div>
+            <div class="title lianj">店铺商品链接</div>
+            <div class="main">
+                <input v-show="false" type="text" id="copyVal" readonly :value="goods.shopUrl" />
+                <div class="left" id="url">{{goods.shopUrl}}
+                </div>
+                <div class="right" data-clipboard-target="#copyVal" v-if="!!goods.shopUrl">复制</div>
+            </div>
+            <div class="title">商品描述</div>
+            <div class="main content">
+                {{goods.description}}
+            </div>
+            <div class="title">商品图片</div>
+            <div class="main img">
+                <img @click="show=true" :src="goods.imgUrl" alt="">
+            </div>
+            <div class="title" v-if="!!goods.installVideoUrl">安装视频</div>
+            <div class="main video" v-if="!!goods.installVideoUrl">
+                <video controls>
+                    <source :src="goods.installVideoUrl" type="video/mp4" />
+                    您的浏览器不支持 video 标签。
+                </video>
+            </div>
+
+        </div>
+        <van-image-preview v-model="show" :images="images">
+        </van-image-preview>
+    </span>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            goods: {},
+            images: [],
+            show: false
+        },
+        mounted() {
+            var _this = this;
+            ajax(`/api/goods/get?id=${getQueryString("id")}`, {},
+                function (res) {
+                    if (res.code == 0) {
+                        console.log(res)
+                        _this.goods = res.data;
+                        _this.images.push(res.data.imgUrl)
+                    }
+
+                }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.user)
+
+            //实例化 ClipboardJS对象;
+            var copyBtn = new ClipboardJS('.right');
+
+            copyBtn.on("success", function (e) {
+                // 复制成功
+                layer.msg('复制成功');
+                e.clearSelection();
+            });
+            copyBtn.on("error", function (e) {
+                //复制失败；
+                console.log(e.action)
+            });
+        },
+        methods: {
+            imgPreview() {
+                ImagePreview(['https://img.yzcdn.cn/vant/apple-1.jpg']);
+            }
+        }
+    })
+</script>
+<% include ./_share/_footer.html %>

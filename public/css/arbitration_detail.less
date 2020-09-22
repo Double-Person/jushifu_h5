@@ -1,0 +1,80 @@
+@import "style.less";
+
+html {
+  background: @bg;
+}
+
+.detail {
+  padding: .1rem;
+  font-size: .14rem;
+
+  .arbitration_detail {
+    padding: .14rem .16rem .16rem;
+    background: #ffffff;
+
+  }
+
+  .arbitration-result,
+  .refund-detail {
+    margin-top: .12rem;
+    padding: .14rem .16rem .16rem;
+    background: #ffffff;
+  }
+
+  .title {
+    color: #2F3133;
+    font-size: .16rem;
+    font-weight: bold;
+    height: .22rem;
+    line-height: .22rem;
+    box-sizing: content-box;
+    padding-bottom: .14rem;
+    border-bottom: .01rem solid #DFE4EB;
+  }
+
+  .text {
+    display: flex;
+    color: #2F3133;
+    margin-top: .1rem;
+
+    span {
+      width: .91rem;
+      color: #909399;
+      height: .18rem;
+      line-height: .18rem;
+      font-size: .13rem;
+    }
+
+    div {
+      width: 2.32rem;
+    }
+  }
+
+  .imgs {
+    .img-title {
+      color: #909399;
+      margin-bottom: .04rem;
+    }
+
+    .img {
+      img {
+        width: .78rem;
+        height: .78rem;
+        margin-right: .04rem;
+        margin-top: .04rem;
+
+        &:nth-child(2n) {
+          margin-right: .03rem;
+        }
+
+        &:nth-child(4n) {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  .red {
+    color: @red;
+  }
+}

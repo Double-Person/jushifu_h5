@@ -1,0 +1,16 @@
+body,
+html {
+  background: #EEF0F3;
+}
+.help {
+  padding: 0.16rem;
+}
+.help .cell {
+  min-height: 0.6rem;
+  align-items: center;
+  font-size: 0.16rem;
+  margin-bottom: 0.17rem;
+}
+.help .cell::after {
+  display: none;
+}

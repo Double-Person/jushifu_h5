@@ -1,0 +1,35 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/help.css<%= siteVersion %>">
+<div id="app">
+    <span class="v-cloak">
+        <div class="help">
+            <van-loading v-if="loading" size="24px" vertical>加载中...</van-loading>
+            <van-cell v-for="(item,index) in list" class="cell" is-link :title="1+index+'、'+item.title" @click="goDetail(item)" />
+        </div>
+    </span>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            list:[],
+            loading:true
+        },
+        mounted() {
+            var _this = this;
+            ajax(`/api/article?pageIndex=1&pageSize=50&typeCode=help`, {},
+                function (res) {
+                    if (res.code == 0) {
+                        _this.list=res.data.pageList;
+                        _this.loading=false;
+                    }
+                }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.common)
+        },
+        methods: {
+            goDetail(item){
+                location.href=`/details.html?${getQueryString('token')}&id=${item.id}`
+            }
+        }
+    })
+</script>
+<% include ./_share/_footer.html %>

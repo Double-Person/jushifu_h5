@@ -1,0 +1,91 @@
+@import "style.less";
+
+html {
+  background: @bg;
+}
+
+.checkin-date {
+  color: @zt;
+  font-size: .14rem;
+  height: .52rem;
+  background: #ffffff;
+  padding: .12rem .16rem;
+
+  &>div {
+    height: .28rem;
+    line-height: .28rem;
+  }
+
+  .iconicon_more {
+    width: .11rem;
+    height: .12rem;
+    margin-right: .09rem;
+    color: #909399;
+  }
+}
+
+.checkin-list {
+  padding: .12rem .16rem;
+
+  .checkin-item {
+    background: #ffffff;
+    padding: .12rem .12rem .16rem;
+    font-size: .14rem;
+    margin-top: .12rem;
+
+    &:nth-child(1) {
+      margin-top: 0;
+    }
+
+    .item-top {
+      height: .23rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: @zs;
+
+      .item-tag {
+        display: flex;
+
+        &>div {
+          border-radius: .14rem;
+          padding: .05rem .08rem;
+          border: .01rem solid @red;
+          color: @red;
+          line-height: 1;
+          font-size: .12rem;
+          margin-right: .04rem;
+
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+
+    .item-bottom {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      height: .22rem;
+      margin-top: .08rem;
+      display: flex;
+      align-items: center;
+
+      span {
+        height: .22rem;
+        line-height: .22rem;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .icon {
+        height: .22rem;
+        width: .22rem;
+        color: #AEB3BC;
+        margin-right: .12rem;
+      }
+    }
+  }
+}

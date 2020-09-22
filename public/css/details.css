@@ -1,0 +1,28 @@
+.details {
+  padding: 0.18rem 0.16rem;
+}
+.details .title {
+  height: 0.25rem;
+  font-size: 0.18rem;
+  font-weight: 600;
+  color: #2f3133;
+  line-height: 0.25rem;
+}
+.details .time {
+  margin: 0.08rem 0 0.16rem 0;
+  height: 0.16rem;
+  font-size: 0.14rem;
+  font-weight: 400;
+  color: #909399;
+  line-height: 0.16rem;
+}
+.details .content {
+  margin-top: 0.12rem;
+  font-size: 0.15rem;
+  font-weight: 400;
+  color: #2f3133;
+  line-height: 0.3rem;
+}
+.details img {
+  width: 100% !important;
+}

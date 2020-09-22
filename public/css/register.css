@@ -1,0 +1,114 @@
+.register-content {
+  width: 89.3%;
+  border-radius: 0.06rem;
+  background: #fff;
+  margin: 0 auto;
+  margin-top: 0.12rem;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+.register-content .title {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 0.34rem auto;
+  padding-top: 0.22rem;
+  width: 2.3rem;
+}
+.register-content .title span {
+  font-size: 0.16rem;
+  color: #3455d3;
+  margin: 0 0.16rem;
+  display: inline-block;
+}
+.register-content .logo {
+  width: 0.82rem;
+  height: 0.82rem;
+  vertical-align: middle;
+  display: block;
+  text-align: center;
+  margin: 0 auto;
+}
+.register-content .register-input {
+  width: 92.8% !important;
+  margin-top: 0.29rem;
+  margin-left: 3.6%;
+}
+.register-content .register-input > div:nth-of-type(1) {
+  margin-bottom: 0.16rem;
+}
+.register-content .register-input .van-field {
+  background: #f5f7fc !important;
+  height: 0.5rem;
+}
+.register-content .register-input .van-field .send-msg {
+  border: none;
+  height: 0.14rem;
+  font-size: 0.14rem;
+  background: #f5f7fc;
+}
+.register-content .van-field__control {
+  font-size: 0.16rem;
+}
+.register-content .register-btn {
+  width: 92.8% !important;
+  margin: 0.16rem 3.6% 0.32rem 3.6%;
+  border-radius: 0.02rem;
+  height: 0.5rem;
+}
+.register-content .register-btn span {
+  font-size: 0.16rem;
+}
+.van-cell__value {
+  display: flex;
+  align-items: center;
+}
+/* 输入框标签 */
+.van-cell__title {
+  display: none !important;
+}
+.register {
+  width: 100%;
+  min-height: 100vh;
+  box-shadow: 0 0.02rem 0.07rem 0 rgba(7, 33, 59, 0.35);
+  padding-top: 0.24rem;
+  background: #3455d3;
+  position: relative;
+}
+.bg-img {
+  width: 100%;
+  position: absolute;
+}
+/* 介绍信息 start */
+.introduce {
+  width: 89.3%;
+  min-height: 0.128rem;
+  margin: 0 auto;
+  border-radius: 0.06rem;
+  background: #fff;
+  position: relative;
+  z-index: 2;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  margin: 0 0.12rem 0.12rem 0.12rem;
+  padding-top: 0.16rem;
+}
+.name {
+  color: #5e6066;
+  font-size: 0.14rem;
+}
+.avatars {
+  width: 0.36rem;
+  height: 0.36rem;
+  border-radius: 50%;
+  margin-right: 0.08rem;
+}
+.content {
+  font-size: 0.16rem;
+  line-height: 0.24rem;
+  padding: 0 0.12rem 0.16rem 0.12rem;
+  color: #2f3133;
+}

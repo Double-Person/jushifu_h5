@@ -1,0 +1,79 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/feedback_list.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="index"> 
+      <van-list v-model="loading" :finished="finished" :finished-text="fundList.total==0?'':'没有更多了'" @load="onLoad">
+        <div class="funds-item" v-for="(item,index) in fundData" v-if="fundList.total>0" @click="goDetail(item)">
+          <div class="title" :class="{def:!item.status}">{{!item.status?'待处理':'已处理'}}<span>{{item.createTime}}</span></div>
+          <div class="content">{{item.content}}</div>
+          <div class="look">
+            查看详情 
+            <img src="<%= fileServer %>/images/yijianfankui_more.png<%= siteVersion %>" alt="">
+          </div>
+        </div>
+      </van-list>
+      <div class="null" v-if="fundList.total==0&&finished">
+        <img src="<%= fileServer %>/images/pic_none.png<%= siteVersion %>" alt="">
+        还没有任何反馈
+      </div>
+    </div>
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data:{
+      fundList: {
+        rows: [],
+        total:0
+      },
+      fundData:[],
+      loading: true,
+      finished: false,
+      falge:false,
+      pageNum:0,
+      moneyData:{}
+    },
+    mounted(){
+      this.onLoad()
+    },
+    methods: {
+      // 跳转意见反馈详情
+      goDetail(item){
+        location.href = `/feedback_detail.html?token=${getQueryString('token')}&id=${item.id}`
+      },
+      onLoad() {
+      // 异步更新数据
+      setTimeout(() => {
+        this.pageNum++;
+        this.getTransit();
+        // // 加载状态结束
+        // this.loading = false;
+      }, 1000);
+    },
+    // 获取订单在途资金
+    getTransit(){
+      var _this=this;
+      ajax(`/api/feedback/list?pageIndex=${_this.pageNum}&pageSize=7`, {},
+        function (res) {
+          console.log(res)
+          if (res.code == 0) {
+            _this.fundList = res.data;
+            _this.falge=true
+            for(let i of res.data.rows){
+              _this.fundData.push(i);
+            }
+            // 数据全部加载完成
+        if (_this.pageNum*7 >= _this.fundList.total) {
+          _this.finished = true;
+          // 加载状态结束
+        _this.loading = false;
+        }
+          }
+        }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.user)
+    }
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

@@ -1,0 +1,101 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/arbitration_detail.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="detail" v-show="showView">
+      <div class="arbitration_detail">
+        <div class="title">申请信息</div>
+        <div class="text"><span>退款单号：</span>{{arbitrationData.refundNo}}</div>
+        <div class="text"><span>订单编号：</span>{{arbitrationData.orderNo}}</div>
+        <div class="text"><span>订单总金额：</span>¥{{arbitrationData.totalAmount}} （含加价 ¥{{arbitrationData.markupAmount}}）</div>
+        <div class="text"><span>申请时间：</span>{{new Date(arbitrationData.applyArbitrationTime).format("yyyy-MM-dd")}}</div>
+        <div class="text red"><span>仲裁退款金额：</span>¥{{arbitrationData.applyArbitrationAmount}}</div>
+        <div class="text"><span>退款原因：</span>{{arbitrationData.refundReason}}</div>
+        <div class="text"><span>详细描述：</span>
+          <div>{{arbitrationData.complaintDescription}}</div>
+        </div>
+        <div class="imgs">
+          <div class="img-title">相关凭证：</div>
+          <div class="img">
+            <img :src="item.url" alt="" v-for="(item,index) in arbitrationData.imgs">
+          </div>
+        </div>
+      </div>
+
+      <div class="arbitration-result" v-if="arbitrationData.status=='PROCESSED'">
+        <div class="title">仲裁结果</div>
+        <div class="text"><span>仲裁结果：</span>{{refundResult}}</div>
+        <div class="text"><span>仲裁内容：</span>
+          <div>{{arbitrationData.arbitrationContent}}</div>
+        </div>
+        <div class="text"><span>审核时间：</span>{{new Date(arbitrationData.handleTime).format("yyyy-MM-dd")}}</div>
+      </div>
+
+      <div class="refund-detail" v-if="arbitrationData.status=='PROCESSED'">
+        <div class="title">退款信息</div>
+        <div class="text red"><span>实际退款金额：</span>¥{{arbitrationData.refundAmount}}</div>
+        <div class="text"><span>退款时间：</span>{{arbitrationData.refundSuccessTime}}</div>
+        <div class="text"><span>退款方式：</span>{{arbitrationData.payWay}}</div>
+        <div class="text"><span>退款结果：</span>{{refundResult}}</div>
+      </div>
+
+    </div>
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      arbitrationData:{},
+      showView:false
+    },
+    computed:{
+    refundResult(){
+      let result=""
+      if(this.arbitrationData.status=='WAIT'){
+        result='待处理'
+      }
+      if(this.arbitrationData.status=='AGREE'){
+        result='同意退款'
+      }
+      if(this.arbitrationData.status=='REFUSE'){
+        result='拒绝退款'
+      }
+      if(this.arbitrationData.status=='ARBITRATION'){
+        result='仲裁'
+      }
+      if(this.arbitrationData.status=='PROCESSED'){
+        result='仲裁已处理'
+      }
+      if(this.arbitrationData.status=='SUCCESS'){
+        result='退款成功'
+      }
+      if(this.arbitrationData.status=='FAIL'){
+        result='退款失败'
+      }
+      if(this.arbitrationData.status=='CANCEL'){
+        result='取消退款'
+      }
+      if(this.arbitrationData.status=='取消仲裁'){
+        result='ARBITRATION_CANCEL'
+      }
+      return result;
+    }
+  },
+    mounted() {
+      var _this=this;
+      ajax(`/api/refund/${getQueryString("id")}`,{},
+        function (res) {
+          if (res.code == 0) {
+            _this.arbitrationData=res.data;
+            _this.showView=true
+          }
+
+        }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.order)
+    },
+    methods: {
+
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

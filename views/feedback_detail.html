@@ -1,0 +1,60 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/feedback_detail.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="index">
+      <div class="title">
+        问题 <span :class="{def:!info.status}">{{!info.status?'待处理':'已处理'}}</span>
+      </div>
+      <div class="time">提交时间：{{info.createTime}}</div>
+      <div class="time bianhao">编号：{{info.id}}</div>
+      <div class="content">{{info.content}}</div>
+      <div class="imgs" v-if="info.images">
+        <img v-for="(item,index) in info.images" @click="isPreview(index)" :src="item" alt="">
+      </div>
+    </div>
+    <div class="index" v-if="info.solveTime">
+      <div class="cutoff"></div>
+      <div class="title">
+        客服回复 
+      </div>
+      <div class="time bianhao">回复时间：{{info.solveTime}}</div>
+      <div class="content">{{info.solveContent}}</div>
+      <img class="logo" src="<%= fileServer %>/images/jushifulogo_blue.png<%= siteVersion %>" alt="">
+    </div>
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      info: {}
+    },
+    mounted() {
+      this.getFeedback()
+    },
+    methods: {
+      // 点击预览
+      isPreview(index) {
+        let _this=this
+        vant.ImagePreview({
+          images: _this.info.images,
+          startPosition: index,
+        });
+      },
+      // 意见反馈详情
+      getFeedback() {
+        let _this = this;
+        ajax(`/api/feedback/detail?id=${getQueryString('id')}`, {},
+          function (res) {
+            console.log(res)
+            if (res.code == 0) {
+              _this.info = res.data
+            }
+
+          }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.user)
+      }
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

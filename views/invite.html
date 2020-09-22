@@ -1,0 +1,216 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/invite.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <img class="top" src="<%= fileServer %>/images/pic.png<%= siteVersion %>" alt="">
+    <div class="invite-main">
+      <div class="steps">
+        <div class="step">
+          <div><img src="<%= fileServer %>/images/yaoqingfanli_fenxiang.png<%= siteVersion %>" alt=""></div>
+          分享给好友
+        </div>
+        <div class="step">
+          <div><img src="<%= fileServer %>/images/yaoqingfanli_haoyouxiadanjiaoyi.png<%= siteVersion %>" alt=""></div>
+          好友下单交易
+        </div>
+        <div class="step">
+          <div><img src="<%= fileServer %>/images/yaoqingfanli_huodexianjinfanli.png<%= siteVersion %>" alt=""></div>
+          获得现金返利
+        </div>
+      </div>
+      <el-button class="yaoqing" @click="isInvite">立即邀请好友</el-button>
+      <div class="yaoqing-num">
+        我的邀请码：{{yaoqingma}}
+        <div class="copy" @click="copyStr(yaoqingma)">复制</div>
+      </div>
+      <div v-if="type!=1">
+        <div class="color-block"></div>
+        <div class="invite-bottom">
+          <div class="fanli-info">
+            <div class="fanli-item">
+              已获得返利
+              <span>¥{{moneyDta.rebateTotal}}</span>
+            </div>
+            <div class="fanli-item">
+              在途返利
+              <span>¥{{moneyDta.rebateIntransit}}</span>
+            </div>
+          </div>
+          <div class="fanli-tag">
+            <div v-for="(item,index) in inviteTag" :class="{selected:item.selected}" @click="inviteTagSwitch(item)">
+              {{item.name}}</div>
+          </div>
+
+          <div class="invite-list">
+            <div v-if="inviteTag[0].selected">
+              <div class="invite-item" v-for="(item,index) in invitedList">
+                <div class="item-top"><span>{{item.customerName}}</span>{{item.amount}}</div>
+                <div class="item-bottom"><span>{{item.placeOrderTime}}</span>{{item.status}}</div>
+              </div>
+              <div class="null-text" v-if="invitedList.length==0">
+                快邀请好友得红包吧~
+              </div>
+            </div>
+            <div v-if="inviteTag[1].selected" class="invitedCustomer">
+              <div class="invite-item" v-for="(item,index) in invitedCustomer">
+                <div class="item-left">
+                  <img :src="item.avatar" alt="">
+                  {{item.nickname}}
+                </div>
+                <div class="item-right">{{item.createTime}}</div>
+              </div>
+              <div class="null-text" v-if="invitedCustomer.length==0">
+                快邀请好友得红包吧~
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="type" class="mengcheng">
+      <div>点击右上角<img class="sandian" src="<%= fileServer %>/images/icon_more.png<%= siteVersion %>" alt="">分享给好友<img class="jiantou" src="<%= fileServer %>/images/icon_jiantou.png<%= siteVersion %>" alt=""></div>
+    </div>
+  </span>
+</div>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      inviteTag: [
+        { name: '返利记录', selected: true },
+        { name: '已邀请', selected: false },
+      ],
+      moneyDta: {},
+      yaoqingma: "",
+      invitedList: [],
+      invitedCustomer: [],
+      type: false
+    },
+    mounted() {
+      var _this = this;
+      if(getQueryString("share")==1){
+        window.location.href="/register.html?userId="+getQueryString('userId')
+      }
+      this.weiconfig()
+      this.yaoqingma = getQueryString('fanli')
+      this.type = getQueryString('type')
+      this.getRebateRecord();
+      ajax(`/api/worker/wallet`, {},
+        function (res) {
+          if (res.code == 0) {
+            console.log(res)
+            _this.moneyDta = res.data;
+          }
+        }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.user)
+    },
+    methods: {
+      // 微信分享配置
+      weiconfig() {
+        var ua = navigator.userAgent.toLowerCase()
+        var isWeixin = ua.indexOf('micromessenger') != -1 //判断是否在微信环境中
+        if (isWeixin) {
+          let shareLink = escape(location.href)
+          ajax(`/api/customer/share_config?shareUrl=${shareLink}`, {},
+            function (res) {
+              if (res.code == 0) {
+                console.log(res);
+                wx.config({
+                  debug: false, // 是否开启调试模式
+                  appId: res.data.appId, // appid
+                  nonceStr: res.data.nonceStr, // 随机字符串
+                  signature: res.data.signature, // 签名
+                  timestamp: res.data.timestamp, // 时间戳
+                  jsApiList: [
+                    // 需要使用的JS接口列表
+                    'onMenuShareTimeline', // 分享到朋友圈接口
+                    'onMenuShareAppMessage', //  分享到朋友接口
+                    'onMenuShareQQ', // 分享到QQ接口
+                    'onMenuShareWeibo', // 分享到微博接口
+                    'onMenuShareQZone',
+                    'updateAppMessageShareData'
+                  ]
+                })
+                // 分享的参数:标题、图片地址、描述等
+                var shareData = {
+                  imgUrl: "https://llfileserver.oss-cn-hangzhou.aliyuncs.com/StaticFile_Test/jushifu/images/ios3x_pic_yaoqingzhuce_logo%403x.png", // 分享显示的缩略图地址
+                  link: location.href+'&share=1', // 分享地址
+                  desc: '聚师傅专业从事家居服务的行业O2O平台，致力于提供家居配送、安装、维修、保养等一站式服务', // 分享描述
+                  title: '好友邀请你注册聚师傅', // 分享标题
+                  success: function () { }, // 用户确认分享后执行的回调函数
+                  cancel: function () { } // 用户取消分享后执行的回调函数
+                }
+                //正式使用
+                wx.ready(res => {
+                  wx.updateAppMessageShareData(shareData) // 分享给好友
+                  wx.onMenuShareTimeline(shareData) // 分享到朋友圈
+                  wx.onMenuShareAppMessage(shareData) // 分享给好友
+                  wx.onMenuShareQQ({})
+                  wx.onMenuShareWeibo({})
+                  wx.onMenuShareQZone({})
+                })
+              }
+            }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.user)
+
+
+        } 
+        // else {
+        //   layer.msg('请在微信中打开该网站，否则无法正常使用')
+        // }
+      },
+      inviteTagSwitch(item) {
+        for (let i of this.inviteTag) {
+          i.selected = false;
+        }
+        if (item.name == '返利记录') {
+          this.getRebateRecord();
+        }
+        if (item.name == "已邀请") {
+          this.getInvitedCustomer()
+        }
+        item.selected = true;
+      },
+      // 调用原生方法，唤醒分享
+      isInvite() {
+        // window.android.share(item.id);
+        // window.webkit.messageHandlers.share.postMessage()
+        share.postMessage('1')
+      },
+      // 获取返利列表
+      getRebateRecord() {
+        let _this = this
+        ajax(`/api/cash_flow/rebate_record`, {},
+          function (res) {
+            if (res.code == 0) {
+              console.log(res)
+              _this.invitedList = res.data;
+            }
+          }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.order)
+      },
+      //  获取已邀下单者列表
+      getInvitedCustomer() {
+        let _this = this
+        ajax(`/api/worker/invited_customer`, {},
+          function (res) {
+            if (res.code == 0) {
+              console.log(res)
+              _this.invitedCustomer = res.data
+            }
+          }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.user)
+      },
+      copyStr(val) { //val 是要复制的字符串
+        var input = document.createElement("input");
+        input.value = val;
+        input.readOnly = true
+        document.body.appendChild(input);
+        input.select();
+        input.setSelectionRange(0, input.value.length)
+        document.execCommand('Copy');
+        document.body.removeChild(input);
+        window.scrollTo(0, 0)
+        layer.msg("复制成功");
+      }
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

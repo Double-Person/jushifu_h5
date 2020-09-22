@@ -1,0 +1,108 @@
+@import "style.less";
+
+html {
+  background: @bg;
+}
+
+.fund-detail {
+  height: 1.4rem;
+  background: #ffffff;
+  padding: 0 .16rem;
+  font-size: .14rem;
+
+  .fund-top {
+    color: #909399;
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: .08rem;
+
+    &>div {
+      width: .98rem;
+      height: .28rem;
+      border-radius: .14rem;
+      border: .01rem solid rgba(201, 205, 213, 1);
+      margin-right: .16rem;
+      text-align: center;
+      line-height: .28rem;
+      margin-top: .12rem;
+      color: #909399;
+
+      &:nth-child(3n) {
+        margin-right: 0;
+      }
+    }
+    .selected{
+      background: #EAEDFA;
+      color: @zs;
+      border-color: #EAEDFA;
+    }
+  }
+  .fund-bottom{
+    height: .32rem;
+    color: #5E6066;
+    margin-top: .1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .date{
+      height: .14rem;
+      line-height: 1;
+    }
+    .money{
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: @zt;
+        font-size: .12rem;
+        &>div{
+          text-align: right;
+          height: .12rem;
+          line-height: 1;
+        }
+    }
+    .iconicon_more{
+      width: .11rem;
+      height: .12rem;
+      color: #909399;
+      margin-right: .09rem;
+    }
+  }
+}
+
+.fund-list{
+  padding: 0 .16rem;
+  margin-top: .1rem;
+  .fund-item{
+    padding: .13rem .12rem .16rem;
+    background: #ffffff;
+    font-size: .14rem;
+    margin-top: .1rem;
+    .item-title{
+      height: .2rem;
+      color: #2F3133;
+      display: flex;
+      justify-content: space-between;
+      align-content: center;
+      span{
+        font-size: .2rem;
+        line-height: 1;
+      }
+      .expenditure{
+        color: #46A134;
+      }
+      .income{
+        color: @red;
+      }
+    }
+    .item-date{
+      color: #909399;
+      font-size: .14rem;
+      margin-top: .17rem;
+      display: flex;
+      justify-content: space-between;
+      height: .14rem;
+      line-height: 1;
+    }
+  }
+}

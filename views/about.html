@@ -1,0 +1,31 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/about.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="about">
+      <!-- <div class="title">{{aboutData.title}}</div> -->
+      <div class="content" v-html="aboutData.content"></div>
+    </div>
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      aboutData:{}
+    },
+    mounted () {
+      var _this=this;
+      ajax(`/api/article?pageIndex=1&pageSize=50&typeCode=about`, {},
+        function (res) {
+          if (res.code == 0) {
+            console.log(res)
+                _this.aboutData = res.data.pageList[0];
+          }
+        }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.common)
+    },
+    methods: {
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

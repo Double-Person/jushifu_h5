@@ -1,0 +1,53 @@
+div {
+  box-sizing: border-box;
+}
+.null {
+  font-size: .14rem;
+  color: #909399;
+  text-align: center;
+}
+.null img {
+  width: 100%;
+  height: .94rem;
+}
+html {
+  background: #EEF0F3;
+}
+.arbitration-list {
+  padding: .1rem .16rem;
+  font-size: .14rem;
+}
+.arbitration-list .arbitration-item {
+  padding: .16rem .12rem;
+  background: #ffffff;
+  margin-bottom: .16rem;
+}
+.arbitration-list .arbitration-item:last-child {
+  margin-bottom: 0;
+}
+.arbitration-list .arbitration-item .item-top {
+  box-sizing: content-box;
+  padding-bottom: .14rem;
+  border-bottom: .01rem solid #DFE4EB;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: .18rem;
+}
+.arbitration-list .arbitration-item .item-top span {
+  color: #3455D3;
+}
+.arbitration-list .arbitration-item .item-bottom {
+  margin-bottom: .06rem;
+  height: .18rem;
+  display: flex;
+  align-items: center;
+}
+.arbitration-list .arbitration-item .item-bottom:last-child {
+  margin-bottom: 0;
+}
+.arbitration-list .arbitration-item .item-bottom span {
+  width: .78rem;
+  margin-right: .1rem;
+  color: #5E6066;
+  line-height: 1;
+}

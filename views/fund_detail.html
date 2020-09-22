@@ -1,0 +1,109 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/fund_detail.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="fund-detail">
+      <div class="fund-top">
+        <div v-for="(item,index) in fundTagList" :class="{selected:item.selected}" @click="fundTag(item)">{{item.name}}
+        </div>
+      </div>
+      <div class="fund-bottom">
+        <div class="date" @click="show = true"><svg class="icon iconicon_more" aria-hidden="true">
+            <use xlink:href="#iconicon_more"></use>
+          </svg>{{showDate}}</div>
+        <div class="money">
+          <div>支出：{{fundInfo.expendTotal}}</div>
+          <div>收入：{{fundInfo.incomeTotal}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fund-list">
+      <div class="fund-item" v-for="(item,index) in fundList" v-if="fundList.length>0">
+        <div class="item-title">{{item.content}}<span :class="item.type!='FINE'&&item.type!='CASH_OUT'?'expenditure':'income'">{{item.type!='FINE'&&item.type!='CASH_OUT'?'+'+item.amount:'-'+item.amount}}</span></div>
+        <div class="item-date">{{item.tradeTime}}<span>总：{{item.nextAmount}}</span></div>
+      </div>
+
+      <div class="null" v-if="fundList.length==0">
+          <img src="<%= fileServer %>/images/pic_none.png<%= siteVersion %>" alt="">
+          暂无相关信息
+        </div>
+    </div>
+
+    <!-- 时间picker  -->
+    <van-popup v-model="show" position="bottom">
+      <van-datetime-picker v-model="currentDate" type="year-month" :min-date="minDate" :formatter="formatter" @cancel="cancel"
+        @confirm="endTimeChange" />
+    </van-popup>
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      currentDate: new Date(),
+      minDate: new Date(1970, 1, 1),
+      show: false,
+      date: new Date().format('yyyy-MM'),
+      showDate:new Date().format('yyyy-MM'),
+      fundTagList: [
+        { name: "全部", selected: true ,type:""},
+        { name: "提现", selected: false ,type:"CASH_OUT"},
+        { name: "罚款", selected: false ,type:"FINE"},
+        { name: "奖励", selected: false ,type:"REWARD"},
+        { name: "邀请返利", selected: false ,type:"REBATE"},
+        { name: "订单收益", selected: false ,type:"ORDER_PROFIT"},
+      ],
+      fundType:"",
+      fundList:[],
+      fundInfo:{},
+      moneyInfo:{}
+    },
+    mounted () {
+      var _this=this
+      this.getFundDetail()
+    },
+    methods: {
+      // 获取资金明细
+      getFundDetail(){
+        var _this=this;
+        ajax(`/api/cash_flow/list?pageNum=1&pageSize=50&refundStatusEnum=ARBITRATION_ALL&cashType=3&type=${this.fundType}&month=${this.date}`,{},
+        function (res) {
+          if (res.code == 0) {
+            console.log(res)
+            _this.fundList=res.data.rows;
+            _this.fundInfo=res.data;
+          }
+
+        }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.order)
+      },
+      formatter(type, value) {
+        if (type === 'year') {
+          return `${value}年`;
+        } else if (type === 'month') {
+          return `${value}月`
+        }
+        return value;
+      },
+      cancel() {
+        this.show = false;
+      },
+      endTimeChange(index) {
+        this.show = false;
+        this.showDate = index.format('yyyy-MM');
+        this.date = index.format('yyyy-MM');
+        this.getFundDetail()
+      },
+      // 标签选择
+      fundTag(item) {
+        for(let i of this.fundTagList){
+          i.selected=false;
+        }
+        item.selected =true;
+        this.fundType=item.type;
+        this.getFundDetail()
+      }
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

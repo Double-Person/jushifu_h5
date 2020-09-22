@@ -1,0 +1,157 @@
+@import "style.less";
+
+html {
+  background: @bg;
+}
+
+#app {
+  padding: .1rem .16rem;
+}
+
+.rate {
+  height: .78rem;
+  background: #ffffff;
+  font-size: .14rem;
+  padding: .16rem .12rem .11rem .12rem;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  &>div {
+    display: flex;
+    color: @zt;
+
+    .rate-view {
+      margin-left: .16rem;
+      line-height: .18rem;
+
+      .iconicon_pingjia_nor {
+        font-size: .24rem;
+      }
+    }
+  }
+
+  &>div:nth-child(1) {
+    height: .24rem;
+    align-items: center;
+  }
+
+  &>div:nth-child(2) {
+    margin-top: .08rem;
+
+    span {
+      color: #2F3133;
+      margin-left: .16rem;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+}
+
+.customer-list {
+  margin-top: .12rem;
+  // min-height: 84vh;
+  .customer-item {
+    background: #ffffff;
+    padding: .16rem .12rem;
+    font-size: .14rem;
+    margin-bottom: .12rem;
+    border-radius: .03rem;
+    &:last-child{
+      margin-bottom: 0;
+    }
+
+    .item-top {
+      height: .36rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+      }
+
+      .item-avatar {
+        width: 1.56rem;
+        height: 100%;
+        display: flex;
+
+        img {
+          width: .36rem;
+          height: .36rem;
+          border-radius: 50%;
+          margin-right: .1rem;
+        }
+
+        .user-info {
+          .user-name {
+            color: #2F3133;
+            height: .2rem;
+            line-height: .2rem;
+          }
+
+          .user-date {
+            color: #909399;
+            font-size: .12rem;
+            height: .17rem;
+            line-height: .17rem;
+          }
+        }
+      }
+    }
+
+    .item-content {
+      color: #2F3133;
+      font-size: .14rem;
+      line-height: .21rem;
+      margin-top: .08rem;
+    }
+
+    .item-imgs {
+      margin-top: .08rem;
+
+      img {
+        width: .76rem;
+        height: .76rem;
+        margin-right: .05rem;
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+
+    .item-tag {
+      margin-top: .16rem;
+      display: flex;
+      flex-wrap: wrap;
+      &>div {
+        border-radius: .02rem;
+        border: .01rem solid @yellow;
+        padding: .04rem .08rem;
+        color: @yellow;
+        margin-right: .08rem;
+      margin-bottom: 0.05rem;
+
+        &:last-child{
+          margin-right: 0;
+        }
+      }
+    }
+  }
+  
+}

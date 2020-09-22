@@ -1,0 +1,41 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/register_success.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="success-box">
+      <img class="success-img" src="<%= fileServer %>/images/icon_jieguo.png<%= siteVersion %>" />
+      注册成功
+    </div>
+    <div class="info">
+      <div>请使用电脑登录聚师傅进行下单哦</div>
+      <span>{{webLink}}</span>
+      <el-button class="submit" @click="copyStr(webLink)">复制官网链接</el-button>
+    </div>
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      webLink:webLink
+    },
+    mounted() {
+      console.log(webLink)
+    },
+    methods: {
+      copyStr(val) { //val 是要复制的字符串
+        var input = document.createElement("input");
+        input.value = val;
+        input.readOnly = true
+        document.body.appendChild(input);
+        input.select();
+        input.setSelectionRange(0, input.value.length)
+        document.execCommand('Copy');
+        document.body.removeChild(input);
+        window.scrollTo(0, 0)
+        layer.msg("复制成功");
+      }
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

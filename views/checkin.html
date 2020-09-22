@@ -1,0 +1,92 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/checkin.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="checkin-date" @click="show = true">
+      <div><svg class="icon iconicon_more" aria-hidden="true">
+          <use xlink:href="#iconicon_more"></use>
+        </svg>{{showDate}}</div>
+    </div>
+
+    <div class="checkin-list">
+      <div class="checkin-item" v-for="(item,index) in checkinList" v-if="checkinList.length>0">
+        <div class="item-top">
+          订单号：{{item.orderNo}}
+          <div class="item-tag">
+            <div v-if="!item.isSignAreaNormal">区域异常</div>
+            <div v-if="!item.isSignTimeNormal">签到超时</div>
+          </div>
+        </div>
+        <div class="item-bottom"><svg class="icon" aria-hidden="true">
+            <use xlink:href="#iconicon_dingwei"></use>
+          </svg><span>{{item.signArea}}</span></div>
+        <div class="item-bottom"><svg class="icon" aria-hidden="true">
+            <use xlink:href="#iconicon_time"></use>
+          </svg><span>{{new Date(item.signInTime).format('yyyy-MM-dd HH:mm:ss')}}</span></div>
+      </div>
+
+      <div class="null" v-if="checkinList.length==0">
+          <img src="<%= fileServer %>/images/pic_none.png<%= siteVersion %>" alt="">
+          暂无相关信息
+        </div>
+    </div>
+    <!-- 时间picker  -->
+    <van-popup v-model="show" position="bottom">
+      <van-datetime-picker v-model="currentDate" type="date" :min-date="minDate" :formatter="formatter" @cancel="cancel"
+        @confirm="endTimeChange" />
+    </van-popup>
+
+
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      currentDate: new Date(),
+      minDate: new Date(1970, 1, 1),
+      show: false,
+      showDate:new Date().format("yyyy-MM"),
+      date:new Date().format("yyyy-MM"),
+      checkinList:[]
+    },
+    mounted () {
+      var _this=this;
+     this.getSignInList();
+    },
+    methods: {
+      getSignInList(){
+        var _this=this;
+        ajax(`/api/worker/sign_in_list?month=${this.date}`,{},
+        function (res) {
+          if (res.code == 0) {
+            _this.checkinList=res.data;
+          }
+
+        }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.user)
+      },
+      formatter(type, value) {
+        if (type === 'year') {
+          return `${value}年`;
+        } else if (type === 'month') {
+          return `${value}月`
+        } else if (type === 'day') {
+          return `${value}日`
+        }
+        return value;
+      },
+      cancel() {
+        this.show = false;
+      },
+      endTimeChange(index) {
+        this.show = false;
+        console.log(index.format('yyyy-MM'))
+        this.date=index.format('yyyy-MM');
+        this.showDate=index.format('yyyy-MM');
+        this.getSignInList();
+      }
+
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

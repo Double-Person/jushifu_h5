@@ -1,0 +1,73 @@
+.goods-detail {
+    padding: 0 .16rem .22rem;
+
+    .title {
+        color: #2F3133;
+        font-size: .16rem;
+        font-weight: bold;
+        height: .22rem;
+        line-height: .22rem;
+        margin-top: .22rem;
+
+        span {
+            font-weight: initial;
+            margin-left: .2rem;
+        }
+    }
+
+    .lianj {
+        margin-top: .28rem;
+    }
+
+    .main {
+        font-size: .15rem;
+        color: #2F3133;
+        line-height: .18rem;
+        margin-top: .1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .left {
+            width: 3rem;
+        }
+
+        .right {
+            width: .36rem;
+            height: .2rem;
+            border-radius: .1rem;
+            border: 1px solid rgba(94, 96, 102, 1);
+            font-size: .1rem;
+            color: #5E6066;
+            text-align: center;
+            line-height: .2rem;
+        }
+
+        &.content {
+            line-height: .3rem;
+        }
+
+        &.img {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            margin-top: .06rem;
+            img {
+                width: .83rem;
+                height: .83rem;
+                margin-right: .03rem;
+                margin-top: .04rem;
+                &:nth-child(4n){
+                    margin-right: 0;
+                }
+            }
+
+        }
+        &.video{
+            video{
+                width: 3.43rem;
+                height: 1.93rem;
+            }
+        }
+    }
+}

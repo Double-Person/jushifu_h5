@@ -1,0 +1,44 @@
+@import "style.less";
+
+html {
+  background: @bg;
+}
+
+.arbitration-list{
+  padding: .1rem .16rem;
+  font-size: .14rem;
+  .arbitration-item{
+    padding: .16rem .12rem;
+    background: #ffffff;
+    margin-bottom:.16rem;
+    &:last-child{
+      margin-bottom: 0;
+    }
+    .item-top{
+      box-sizing: content-box;
+      padding-bottom: .14rem;
+      border-bottom: .01rem solid #DFE4EB;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: .18rem;
+      span{
+        color: @zs;
+      }
+    }
+    .item-bottom{
+      margin-bottom: .06rem;
+      height: .18rem;
+      display: flex;
+      align-items: center;
+      &:last-child{
+        margin-bottom: 0;
+      }
+      span{
+        width: .78rem;
+        margin-right: .1rem;
+        color: @zt;
+        line-height: 1;
+      }
+    }
+  }
+}

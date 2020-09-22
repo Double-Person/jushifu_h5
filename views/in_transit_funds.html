@@ -1,0 +1,89 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/in_transit_funds.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="transit-funds">
+      <div class="transit-top">
+        <div class="fund-title">订单在途金额</div>
+        <div class="fund-tips">订单在途金额=您所有未完成订单的预计收入</div>
+        <div class="money">{{moneyData.cashIntransit}}</div>
+      </div>
+
+      <div class="list">
+      <van-list v-model="loading" :finished="finished" :finished-text="fundList.total==0?'':'没有更多了'" @load="onLoad">
+        <div class="funds-item" v-for="(item,index) in fundData" v-if="fundList.total>0">
+          <div class="funds-top"><span>订单{{item.orderNo}}</span>{{item.workerCashIntransit}}</div>
+          <div class="funds-bottom"><span>{{item.createTime}}</span><span>加价{{item.markupAmount}}</span></div>
+        </div>
+      </van-list>
+      <div class="null" v-if="fundList.total==0&&finished">
+        <img src="<%= fileServer %>/images/pic_none.png<%= siteVersion %>" alt="">
+        暂无相关信息
+      </div>
+    </div>
+
+      
+    </div>
+  </span>
+</div>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      fundList: {
+        rows: [],
+        total:0
+      },
+      fundData:[],
+      loading: true,
+      finished: false,
+      falge:false,
+      pageNum:0,
+      moneyData:{}
+    },
+    mounted() {
+      var _this = this;
+      ajax(`/api/worker/wallet`, {},
+        function (res) {
+          console.log(res)
+          if (res.code == 0) {
+            _this.moneyData = res.data;
+            _this.onLoad()
+          }
+        }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.user)
+    },
+    methods: {
+      onLoad() {
+      // 异步更新数据
+      setTimeout(() => {
+        this.pageNum++;
+        this.getTransit();
+        // // 加载状态结束
+        // this.loading = false;
+      }, 1000);
+    },
+    // 获取订单在途资金
+    getTransit(){
+      var _this=this;
+      ajax(`/api/order?pageNum=${this.pageNum}&pageSize=7&status=INSERVICE`, {},
+        function (res) {
+          console.log(res)
+          if (res.code == 0) {
+            _this.fundList = res.data;
+            _this.falge=true
+            for(let i of res.data.rows){
+              _this.fundData.push(i);
+            }
+            // 数据全部加载完成
+        if (_this.pageNum*7 >= _this.fundList.total) {
+          _this.finished = true;
+          // 加载状态结束
+        _this.loading = false;
+        }
+          }
+        }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.order)
+    }
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

@@ -1,0 +1,42 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/details.css<%= siteVersion %>">
+<div id="app">
+    <span class="v-cloak">
+        <div class="details">
+            <div class="title">{{detail.title}}</div>
+            <div class="time" v-if="tiemShow">{{detail.createTime.split(" ")[0]}}</div>
+            <div class="content">
+                <div v-html="detail.content"></div>
+            </div>
+        </div>
+    </span>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            detail: {
+                createTime:""
+            },
+            tiemShow:false
+        },
+        mounted() {
+            var _this = this;
+            if(getQueryString("gonggao")==1){
+                console.log(111)
+                this.tiemShow=true;
+            }
+            ajax(`/api/article/${getQueryString('id')}/detail`, {},
+                function (res) {
+                    console.log(res)
+                    if (res.code == 0) {
+                        _this.detail = res.data;
+
+                    }
+                }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.common)
+        },
+        methods: {
+        }
+    })
+</script>
+<% include ./_share/_footer.html %>

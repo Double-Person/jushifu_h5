@@ -1,0 +1,55 @@
+.index {
+  padding: 0.16rem;
+  font-size: 0.14rem;
+}
+.index .funds-item {
+  background: #f5f7fc;
+  border-radius: 3px;
+  margin-bottom: 16px;
+}
+.index .funds-item:last-child {
+  margin-bottom: 0;
+}
+.index .funds-item .title {
+  height: 0.4rem;
+  color: #46ae32;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+.index .funds-item .title.def {
+  color: #909399;
+}
+.index .funds-item .title span {
+  font-size: 0.12rem;
+  color: #909399;
+  height: 0.12rem;
+}
+.index .funds-item .content {
+  padding: 0 0.12rem;
+  font-size: 0.15rem;
+  line-height: 0.23rem;
+  margin-top: 0.04rem;
+  margin-bottom: 0.16rem;
+  max-height: 0.46rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.index .funds-item .look {
+  color: #909399;
+  font-size: 0.14rem;
+  padding: 0 0.12rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 0.39rem;
+  border-top: 1px solid #DFE4EB;
+}
+.index .funds-item .look img {
+  width: 0.12rem;
+  height: 0.12rem;
+}

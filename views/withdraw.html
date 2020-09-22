@@ -1,0 +1,108 @@
+<% include ./_share/_header.html %>
+<link rel="stylesheet" type="text/css" href="<%= fileServer %>/css/in_transit_funds.css<%= siteVersion %>">
+<div id="app">
+  <span class="v-cloak">
+    <div class="transit-funds">
+      <div class="transit-top">
+        <div class="fund-title">提现中</div>
+        <div class="money">{{moneyData.withdrawing}}</div>
+      </div>
+
+      <!-- <div class="funds-item" v-for="(item,index) in fundList" v-if="fundList.length>0">
+        <div class="funds-top"><span>{{item.text}}</span>{{item.totalAmount}}</div>
+        <div class="funds-bottom"><span>{{item.date}}</span><span>手续费{{item.water}}</span></div>
+      </div> -->
+
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" :offset="300"
+        :immediate-check="false">
+        <div class="funds-item" v-for="(item,index) in fundData" v-if="fundList.total>0">
+          <div class="funds-top"><span>{{isStatus(item).type}} {{isStatus(item).name}}</span>{{item.actualAmount}}</div>
+        <div class="funds-bottom"><span>{{new Date(item.createTime).format("yyyy-MM-dd")}}</span><span>手续费{{item.serviceCharge}}</span></div>
+        </div>
+      </van-list>
+
+      <div class="null" v-if="fundList.total==0">
+        <img src="<%= fileServer %>/images/pic_none.png<%= siteVersion %>" alt="">
+        暂无相关信息
+      </div>
+    </div>
+  </span>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      moneyData:{},
+      fundList: [],
+      fundData: [],
+      loading: false,
+      finished: false,
+      pageNum: 1,
+    },
+    mounted() {
+      var _this = this;
+      ajax(`/api/worker/wallet`, {},
+        function (res) {
+          console.log(res)
+          if (res.code == 0) {
+            _this.moneyData = res.data;
+          }
+        }, projectData.REQUEST_TYPE.POST, projectData.REQUEST_TWO.user)
+      ajax(`/api/withdraw/list?pageIndex=${this.pageNum}&pageSize=7`, {},
+        function (res) {
+          console.log(res)
+          if (res.code == 0) {
+            _this.fundList = res.data;
+            _this.fundData = res.data.rows;
+          }
+        }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.order)
+    },
+    methods: {
+      onLoad() {
+        // 异步更新数据
+        setTimeout(() => {
+          this.pageNum++;
+          this.getTransit();
+          // // 加载状态结束
+          // this.loading = false;
+        }, 1000);
+      },
+      // 获取订单在途资金
+      getTransit() {
+        var _this = this;
+        ajax(`/api/withdraw/list?pageIndex=${this.pageNum}&pageSize=7`, {},
+          function (res) {
+            if (res.code == 0) {
+              _this.fundList = res.data;
+              for (let i of res.data.rows) {
+                _this.fundData.push(i);
+              }
+              // 数据全部加载完成
+              console.log(_this.pageNum * 7)
+              console.log(_this.fundList.total)
+              if (_this.pageNum * 7 >= _this.fundList.total) {
+                _this.finished = true;
+                // 加载状态结束
+                _this.loading = false;
+              }
+            }
+          }, projectData.REQUEST_TYPE.GET, projectData.REQUEST_TWO.order)
+      },
+      // 根据状态返回对应值
+      isStatus(item){
+        let result={}
+        if(item.targetAccount=="ALIPAY"){
+          result.type="支付宝账户";
+          result.name=item.alipayCashOutAccount;
+          return result
+        }
+        if(item.targetAccount=="WECHAT"){
+          result.type="微信零钱";
+          result.name=item.wechatCashOutAccount;
+          return result
+        }
+      }
+    }
+  })
+</script>
+<% include ./_share/_footer.html %>

@@ -1,0 +1,12 @@
+
+/.idea
+node_modules/
+dist/
+
+outapp*
+
+npm-debug.log
+.vscode
+package-lock.json
+
+.DS_Store
